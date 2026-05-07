@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IMPOSTOR FC ⚽</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<!-- ══════════════════════ HOME ══════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="stadium-bg"></div>
+  <div class="home-content">
+    <div class="logo-wrap">
+      <div class="logo-star">★</div>
+      <h1 class="logo-title">IMPOSTOR<span class="logo-fc">FC</span></h1>
+      <div class="logo-sub">¿Quién es el espía entre los cracks?</div>
+    </div>
+    <div class="home-avatar-picker">
+      <div class="avatar-label">ELIGE TU AVATAR</div>
+      <div class="avatar-row" id="avatar-row-home"></div>
+    </div>
+    <div class="home-name-row">
+      <input id="home-name" type="text" maxlength="16" placeholder="TU NOMBRE / ALIAS" class="input-main" />
+    </div>
+    <div class="home-buttons">
+      <button class="btn-primary" id="btn-create">⚽ CREAR SALA</button>
+      <button class="btn-secondary" id="btn-join-open">🔑 UNIRSE CON CÓDIGO</button>
+    </div>
+    <div id="join-panel" class="join-panel hidden">
+      <input id="join-code" type="text" maxlength="5" placeholder="CÓDIGO" class="input-code" />
+      <button class="btn-primary" id="btn-join-confirm">ENTRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ LOBBY ══════════════════════ -->
+<div id="screen-lobby" class="screen">
+  <div class="stadium-bg"></div>
+  <div class="lobby-layout">
+
+    <!-- Izquierda: config -->
+    <div class="lobby-left">
+      <div class="panel">
+        <h2 class="panel-title">CONFIGURACIÓN<br/>DE SALA</h2>
+
+        <div class="config-group">
+          <label class="config-label">🎮 MODO DE JUEGO</label>
+          <div class="mode-grid" id="mode-grid"></div>
+        </div>
+
+        <div class="config-group">
+          <label class="config-label">👺 NÚMERO DE IMPOSTORES</label>
+          <select id="cfg-impostors" class="select-main">
+            <option value="1">1 Impostor</option>
+            <option value="2">2 Impostores</option>
+            <option value="3">3 Impostores</option>
+          </select>
+        </div>
+
+        <div class="config-group">
+          <label class="config-label">⏱ DURACIÓN DE DISCUSIÓN</label>
+          <select id="cfg-duration" class="select-main">
+            <option value="3">3 minutos</option>
+            <option value="5">5 minutos</option>
+            <option value="10" selected>10 minutos</option>
+            <option value="15">15 minutos</option>
+          </select>
+        </div>
+
+        <div class="room-code-box">
+          <div class="room-code-label">CÓDIGO DE SALA</div>
+          <div class="room-code-value" id="room-code-display">─────</div>
+          <button class="btn-copy" id="btn-copy-code">⧉ COPIAR</button>
+        </div>
+
+        <button class="btn-danger" id="btn-leave-lobby">🚪 SALIR</button>
+      </div>
+    </div>
+
+    <!-- Derecha: jugadores + chat -->
+    <div class="lobby-right">
+      <div class="players-header">
+        <span class="section-title">JUGADORES</span>
+        <span class="players-sub">Operativos en la sala</span>
+        <span class="players-count">
+          <span id="players-ready">0</span>/<span id="players-total">0</span>
+          <span class="count-label"> LISTOS</span>
+        </span>
+      </div>
+      <div class="players-grid" id="players-grid"></div>
+      <div class="chat-panel">
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input-row">
+          <input id="chat-input" type="text" placeholder="Mensaje..." maxlength="200" class="chat-input" />
+          <button class="btn-send" id="btn-send-chat">➤</button>
+        </div>
+      </div>
+      <div class="lobby-actions">
+        <button class="btn-ready" id="btn-ready">○ MARCAR LISTO</button>
+        <button class="btn-start hidden" id="btn-start">▶ INICIAR PARTIDA</button>
+        <button class="btn-force-vote hidden" id="btn-force-vote">🗳️ FORZAR VOTO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- XP Badge -->
+  <div class="xp-badge" id="xp-badge">
+    <div class="xp-title">IMPOSTOR PRO</div>
+    <div class="xp-level">LVL <span id="xp-level">1</span></div>
+    <div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar" style="width:10%"></div></div>
+    <div class="xp-values"><span id="xp-current">0</span> XP &nbsp; <span id="xp-next">1000</span> XP</div>
+  </div>
+</div>
+
+<!-- ══════════════════════ JUEGO ══════════════════════ -->
+<div id="screen-game" class="screen">
+  <div class="stadium-bg"></div>
+
+  <div class="game-topbar">
+    <div class="game-round">RONDA <span id="game-round-num">1</span></div>
+    <div class="game-timer-wrap">
+      <div class="game-timer" id="game-timer">10:00</div>
+      <div class="timer-label">TIEMPO</div>
+    </div>
+    <div class="game-category">
+      <span class="cat-label">CATEGORÍA</span>
+      <span class="cat-value" id="game-category">─</span>
+    </div>
+    <button class="btn-force-vote hidden" id="btn-force-vote-game" style="margin-left:auto">🗳️ FORZAR VOTO</button>
+  </div>
+
+  <div class="game-layout">
+
+    <!-- Izquierda: rol + imagen + jugadores -->
+    <div class="game-left">
+      <div class="role-card" id="role-card">
+        <div class="role-badge" id="role-badge">...</div>
+        <div class="role-title" id="role-title">─</div>
+
+        <!-- Imagen de referencia (solo agentes) -->
+        <div class="word-image-wrap hidden" id="word-image-wrap">
+          <img id="word-image" src="" alt="" class="word-image" />
+        </div>
+
+        <div class="word-display" id="word-display">
+          <div class="word-label">LA PALABRA ES</div>
+          <div class="word-value" id="word-value">───</div>
+          <div class="word-hint" id="word-hint"></div>
+        </div>
+
+        <div class="impostor-msg hidden" id="impostor-msg">
+          <div class="imp-icon">👺</div>
+          <div class="imp-title">ERES EL IMPOSTOR</div>
+          <div class="imp-sub">Escucha las pistas y descubre la palabra.<br/>¡No te delates!</div>
+        </div>
+      </div>
+
+      <div class="alive-players" id="alive-players"></div>
+    </div>
+
+    <!-- Derecha: palabras + chat -->
+    <div class="game-right">
+      <!-- Panel de palabras de la ronda -->
+      <div class="words-panel">
+        <div class="words-panel-title">📋 PALABRAS DE LA RONDA</div>
+        <div class="words-list" id="words-list"></div>
+        <div class="word-submit-row" id="word-submit-row">
+          <input id="word-submit-input" type="text" placeholder="Escribe tu palabra pista..." maxlength="60" class="chat-input" />
+          <button class="btn-submit-word" id="btn-submit-word">✓ ENVIAR</button>
+        </div>
+        <div class="word-sent-notice hidden" id="word-sent-notice">✅ Palabra enviada — esperando a los demás</div>
+      </div>
+
+      <!-- Chat de discusión -->
+      <div class="game-chat-panel">
+        <div class="game-chat-title">💬 DISCUSIÓN</div>
+        <div class="chat-messages" id="game-chat-messages"></div>
+        <div class="chat-input-row">
+          <input id="game-chat-input" type="text" placeholder="Habla con el equipo..." maxlength="200" class="chat-input" />
+          <button class="btn-send" id="btn-send-game-chat">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ MODAL VOTACIÓN ══════════════════════ -->
+<div id="modal-vote" class="modal-overlay hidden">
+  <div class="modal-box vote-modal-box">
+    <h2 class="modal-title">🗳️ ¡HORA DE VOTAR!</h2>
+    <p class="modal-sub">¿Quién crees que es el IMPOSTOR?</p>
+
+    <!-- Imagen revelada en votación -->
+    <div class="vote-image-wrap" id="vote-image-wrap">
+      <div class="vote-img-label">LA PALABRA ERA SOBRE...</div>
+      <img id="vote-image" src="" alt="" class="vote-image" />
+      <div class="vote-word-reveal" id="vote-word-reveal">?????</div>
+    </div>
+
+    <div class="vote-timer-wrap">
+      <div class="vote-timer" id="vote-timer">30</div>
+      <div class="vote-timer-label">segundos</div>
+    </div>
+    <div class="vote-progress"><span id="votes-cast">0</span> de <span id="votes-total">0</span> votos emitidos</div>
+    <div class="vote-grid" id="vote-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════ MODAL RESULTADOS ══════════════════════ -->
+<div id="modal-result" class="modal-overlay hidden">
+  <div class="modal-box modal-result-box">
+    <div class="result-header" id="result-header"></div>
+    <div class="result-reveal" id="result-reveal"></div>
+    <div class="result-scores" id="result-scores"></div>
+    <div class="result-actions" id="result-actions">
+      <button class="btn-primary hidden" id="btn-next-round">▶ SIGUIENTE RONDA</button>
+      <button class="btn-secondary hidden" id="btn-back-lobby">🏠 VOLVER AL LOBBY</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
